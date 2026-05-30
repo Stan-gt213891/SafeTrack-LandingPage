@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geocercas - SafeTrack</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo-box">
+    <img src="assets/logo-safetrack.png" alt="SafeTrack">
+  </div>
+
+  <nav class="nav-links">
+    <a href="dashboard.html">INICIO</a>
+    <a href="miembros.html">MIEMBROS</a>
+    <a href="alertas.html">ALERTAS</a>
+    <a href="geocercas.html">GEOCERCAS</a>
+    <a href="historial.html">HISTORIAL</a>
+  </nav>
+</header>
+
+<main class="geofence-page">
+
+  <h1>GESTIÓN DE GEOCERCAS</h1>
+
+  <p class="safe-status">
+    🟢 Dependiente dentro de zona segura
+  </p>
+
+  <section class="geofence-content">
+
+    <div class="geofence-map">
+      <div class="geo-circle geo-home"></div>
+      <div class="geo-circle geo-school"></div>
+
+      <div class="point red-point geo-red"></div>
+      <div class="point green-point geo-green"></div>
+
+      <span class="geo-label home-label">Casa</span>
+      <span class="geo-label school-label">Colegio</span>
+    </div>
+
+    <aside class="geofence-panel">
+      <h2>GEOCERCAS CONFIGURADAS</h2>
+
+      <div class="geofence-item">
+        <h3>🏠 CASA</h3>
+        <p>RADIO - 300 M</p>
+      </div>
+
+      <div class="geofence-item">
+        <h3>🏫 COLEGIO</h3>
+        <p>RADIO - 500 M</p>
+      </div>
+    </aside>
+
+  </section>
+
+  <a href="#" class="new-geofence-btn">
+    + NUEVA GEOCERCA
+  </a>
+
+</main>
+
+</body>
+</html>

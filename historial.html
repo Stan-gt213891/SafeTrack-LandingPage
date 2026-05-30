@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Rutas - SafeTrack</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="logo-box">
+    <img src="assets/logo-safetrack.png" alt="SafeTrack">
+  </div>
+
+  <nav class="nav-links">
+    <a href="dashboard.html">INICIO</a>
+    <a href="miembros.html">MIEMBROS</a>
+    <a href="alertas.html">ALERTAS</a>
+    <a href="geocercas.html">GEOCERCAS</a>
+    <a href="historial.html">HISTORIAL</a>
+  </nav>
+</header>
+
+<main class="history-page">
+
+  <section class="map-area">
+
+    <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <line x1="43" y1="29" x2="63" y2="58"
+stroke="#d14bff"
+stroke-width="0.5"/>
+    </svg>
+
+    <div class="point red-point"></div>
+    <div class="point green-point"></div>
+
+    <span class="route-text school">Hijo - Escuela Belaunde</span>
+    <span class="route-text home">Casa</span>
+
+  </section>
+
+  <aside class="history-panel">
+    <h2>CONSULTAR HISTORIAL</h2>
+
+    <p class="dependent">
+      Dependiente:<br>
+      <strong>Juan Pérez</strong>
+    </p>
+
+    <div class="history-card">
+      <p>📅 <strong>Fecha:</strong><br>15/05/2026</p>
+      <p>🕘 <strong>Salida:</strong><br>07:15 AM</p>
+      <p>🕘 <strong>Llegada:</strong><br>07:45 AM</p>
+      <p>📍 <strong>Destino:</strong><br>Escuela Belaunde</p>
+      <p>🟢 <strong>Estado:</strong><br>Ruta segura</p>
+    </div>
+
+    <a href="#" class="details-btn">Ver detalles</a>
+
+    <div class="legend">
+      <p><span class="legend-dot green"></span> INICIO</p>
+      <p><span class="legend-dot red"></span> DESTINO</p>
+    </div>
+  </aside>
+
+</main>
+
+</body>
+</html>
