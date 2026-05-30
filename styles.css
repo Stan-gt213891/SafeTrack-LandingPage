@@ -873,3 +873,9 @@ footer h3 {
   font-style: italic;
   box-shadow: 0 3px 4px rgba(0,0,0,0.3);
 }
+.welcome-user {
+  font-size: 16px;
+  font-weight: 800;
+  font-style: italic;
+  margin-bottom: 15px;
+}
