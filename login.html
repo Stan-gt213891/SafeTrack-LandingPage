@@ -32,16 +32,20 @@
     <label>CORREO ELECTRÓNICO</label>
     <div class="input-box">
       <span>✉️</span>
-      <input type="email" placeholder="ejemplo@correo.com">
+      <input id="loginEmail" type="email" placeholder="ejemplo@correo.com">
     </div>
 
     <label>CONTRASEÑA</label>
     <div class="input-box">
       <span>🔒</span>
-      <input type="password" placeholder="********">
+      <input id="loginPassword" type="password" placeholder="********">
     </div>
 
-    <a href="dashboard.html" class="auth-btn">INGRESAR</a>
+    <button id="loginButton" class="auth-button">
+      INGRESAR
+    </button>
+
+    <p id="loginMessage" class="auth-text"></p>
 
     <p class="auth-text">¿No tienes una cuenta?</p>
     <a href="registro.html" class="auth-link">Regístrate aquí</a>
@@ -49,5 +53,6 @@
   </div>
 </div>
 
+<script src="script.js"></script>
 </body>
 </html>
