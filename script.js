@@ -93,7 +93,20 @@ localStorage.setItem("safeTrackRole", data.role);
     }
   });
 }
-const dashboardEmail = document.getElementById("dashboardEmail");
+const dashboardFullName = document.getElementById("dashboardFullName");
+const dashboardRole = document.getElementById("dashboardRole");
+
+if (dashboardFullName && dashboardRole) {
+  const savedFullName = localStorage.getItem("safeTrackFullName");
+  const savedRole = localStorage.getItem("safeTrackRole");
+
+  if (!savedFullName) {
+    window.location.href = "login.html";
+  } else {
+    dashboardFullName.textContent = savedFullName;
+    dashboardRole.textContent = savedRole || "Tutor";
+  }
+}
 
 if (dashboardEmail) {
   const savedEmail = localStorage.getItem("safeTrackEmail");
