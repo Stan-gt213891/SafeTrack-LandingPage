@@ -34,15 +34,17 @@
     <h2>CONSULTAR HISTORIAL</h2>
 
     <p class="dependent">
-      Dependiente:<br>
-      <strong>Juan Pérez</strong>
-    </p>
+  Dependiente:<br>
+  <select id="historyDependentSelect">
+    <option value="">Cargando dependientes...</option>
+  </select>
+</p>
 
     <div class="history-card">
-      <p>📅 <strong>Fecha:</strong><br>31/05/2026</p>
-      <p>🕘 <strong>Salida:</strong><br>07:15 AM</p>
-      <p>🕘 <strong>Llegada:</strong><br>07:45 AM</p>
-      <p>📍 <strong>Destino:</strong><br>Escuela Belaunde</p>
+   <p>📅 <strong>Fecha:</strong><br><span id="historyDate">Cargando...</span></p>
+      <p>🕘 <strong>Salida:</strong><br><span id="historyStartTime">Cargando...</span></p>
+<p>🕘 <strong>Llegada:</strong><br><span id="historyEndTime">Cargando...</span></p>
+      <p>📍 <strong>Destino:</strong><br><span id="historyDestination">Cargando...</span></p>
       <p>🌎 <strong>Latitud:</strong><br><span id="historyLatitude">Cargando...</span></p>
       <p>🌎 <strong>Longitud:</strong><br><span id="historyLongitude">Cargando...</span></p>
       <p>🟢 <strong>Estado:</strong><br><span id="historyStatus">Cargando estado...</span></p>
@@ -51,10 +53,7 @@
     <button id="historyDetailsButton" class="details-btn">
   Ver detalles
 </button>
-    <div class="legend">
-      <p><span class="legend-dot green"></span> INICIO</p>
-      <p><span class="legend-dot red"></span> DESTINO</p>
-    </div>
+
   </aside>
 
 </main>

@@ -174,13 +174,41 @@ if (panicButton) {
     }
   });
 }
-    
 
 /* UBICACIÓN EN DASHBOARD CON DIRECCIÓN */
 
 const dashboardLocation = document.getElementById("dashboardLocation");
 
 if (dashboardLocation) {
+  async function sendCurrentLocation() {
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          await fetch(`${API_URL}/tracking/location`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              dependentId: 1,
+              latitude: position.coords.latitude.toString(),
+              longitude: position.coords.longitude.toString()
+            })
+          });
+        } catch (error) {
+          console.log("Error enviando ubicación");
+        }
+      },
+      () => {
+        console.log("Permiso de ubicación denegado");
+      }
+    );
+  }
+
   async function loadDashboardLocation() {
     try {
       const response = await fetch(`${API_URL}/tracking/1`);
@@ -194,7 +222,8 @@ if (dashboardLocation) {
         const addressData = await addressResponse.json();
 
         dashboardLocation.textContent =
-          addressData.display_name || `Lat: ${data.latitude}, Lng: ${data.longitude}`;
+          addressData.display_name ||
+          `Lat: ${data.latitude}, Lng: ${data.longitude}`;
       } else {
         dashboardLocation.textContent = "No se pudo cargar ubicación";
       }
@@ -203,7 +232,11 @@ if (dashboardLocation) {
     }
   }
 
-  loadDashboardLocation();
+  sendCurrentLocation();
+
+  setTimeout(() => {
+    loadDashboardLocation();
+  }, 1500);
 }
 
 /* DATOS DEL USUARIO EN MIEMBROS */
@@ -264,20 +297,94 @@ const geofenceLatitude = document.getElementById("geofenceLatitude");
 const geofenceLongitude = document.getElementById("geofenceLongitude");
 
 if (geofenceStatus && geofenceLatitude && geofenceLongitude) {
+  function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const toRad = value => value * Math.PI / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) *
+      Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+  }
+
   async function loadGeofenceLocation() {
     try {
-      const response = await fetch(`${API_URL}/tracking/1`);
-      const data = await response.json();
+      const trackingResponse = await fetch(`${API_URL}/tracking/1`);
+      const trackingData = await trackingResponse.json();
 
-      if (response.ok) {
-        geofenceStatus.textContent = "🟢 Dependiente dentro de zona segura";
-        geofenceLatitude.textContent = data.latitude;
-        geofenceLongitude.textContent = data.longitude;
-      } else {
-        geofenceStatus.textContent = "🔴 No se pudo validar la zona segura";
-        geofenceLatitude.textContent = "No disponible";
-        geofenceLongitude.textContent = "No disponible";
+      if (!trackingResponse.ok) {
+        throw new Error();
       }
+
+      const currentLat = parseFloat(trackingData.latitude);
+      const currentLon = parseFloat(trackingData.longitude);
+
+      geofenceLatitude.textContent = trackingData.latitude;
+      geofenceLongitude.textContent = trackingData.longitude;
+
+      const geofencesResponse = await fetch(`${API_URL}/geofences`);
+      const geofences = await geofencesResponse.json();
+
+      const validGeofences = geofences.filter(g => g.latitude && g.longitude);
+
+      if (validGeofences.length === 0) {
+        geofenceStatus.textContent = "🔴 No existen geocercas con ubicación registrada";
+        return;
+      }
+
+      let insideAnyGeofence = false;
+      let closestGeofence = null;
+      let closestDistance = Infinity;
+
+      validGeofences.forEach(geofence => {
+        const geofenceLat = parseFloat(geofence.latitude);
+        const geofenceLon = parseFloat(geofence.longitude);
+
+        const distance = calculateDistanceMeters(
+          currentLat,
+          currentLon,
+          geofenceLat,
+          geofenceLon
+        );
+
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestGeofence = geofence;
+        }
+
+        if (distance <= geofence.radius) {
+          insideAnyGeofence = true;
+          closestGeofence = geofence;
+        }
+      });
+
+      if (insideAnyGeofence) {
+        geofenceStatus.textContent =
+          `🟢 Dentro de zona segura: ${closestGeofence.name}`;
+      } else {
+        geofenceStatus.textContent =
+          `🔴 Fuera de zona segura. Más cercana: ${closestGeofence.name} (${Math.round(closestDistance)} m)`;
+
+        const alreadyAlerted = sessionStorage.getItem("geofenceExitAlert");
+
+        if (!alreadyAlerted) {
+          await fetch(`${API_URL}/alerts/panic`, {
+            method: "POST"
+          });
+
+          sessionStorage.setItem("geofenceExitAlert", "true");
+        }
+      }
+
     } catch (error) {
       geofenceStatus.textContent = "🔴 Error al conectar con Tracking Service";
       geofenceLatitude.textContent = "Error";
@@ -285,7 +392,9 @@ if (geofenceStatus && geofenceLatitude && geofenceLongitude) {
     }
   }
 
-  loadGeofenceLocation();
+  setTimeout(() => {
+    loadGeofenceLocation();
+  }, 1500);
 }
 
 /* ALERTAS */
@@ -323,7 +432,16 @@ async function loadAlerts() {
         hour12: true
       });
 
-      alertItem.innerHTML = `🔔 ${alertData.message} - ${date}`;
+      alertItem.innerHTML = `
+        🔔 ${alertData.message} - ${date}
+        <br>
+        <button
+          class="delete-member-btn"
+          onclick="deleteAlert(${alertData.id})">
+          🗑️ Eliminar
+        </button>
+      `;
+
       alertsList.appendChild(alertItem);
     });
 
@@ -359,7 +477,7 @@ async function loadFamilyMembers() {
     dynamicCards.forEach(card => card.remove());
 
     let dependents = 0;
-    let tutors = 1; // usuario logueado como tutor principal
+    let tutors = 1;
 
     members.forEach(member => {
       const newCard = document.createElement("div");
@@ -498,6 +616,8 @@ async function loadGeofences() {
         <h3>📍 ${geofence.name}</h3>
         <p>RADIO - ${geofence.radius} M</p>
         <p>Estado: ${geofence.status}</p>
+        <p>Latitud: ${geofence.latitude || "No registrada"}</p>
+        <p>Longitud: ${geofence.longitude || "No registrada"}</p>
 
         <button
           class="delete-member-btn"
@@ -512,6 +632,27 @@ async function loadGeofences() {
   } catch (error) {
     console.log("Error cargando geocercas:", error);
   }
+}
+
+function getCurrentBrowserPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject("Geolocalización no soportada");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        resolve({
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString()
+        });
+      },
+      () => {
+        reject("No se pudo obtener la ubicación");
+      }
+    );
+  });
 }
 
 if (addGeofenceButton) {
@@ -531,6 +672,10 @@ if (addGeofenceButton) {
     }
 
     try {
+      message.textContent = "Obteniendo ubicación actual...";
+
+      const currentPosition = await getCurrentBrowserPosition();
+
       const response = await fetch(`${API_URL}/geofences`, {
         method: "POST",
         headers: {
@@ -539,22 +684,29 @@ if (addGeofenceButton) {
         body: JSON.stringify({
           name,
           radius,
-          status: "Activa"
+          status: "Activa",
+          latitude: currentPosition.latitude,
+          longitude: currentPosition.longitude
         })
       });
 
       if (response.ok) {
-        message.textContent = "Geocerca guardada correctamente.";
+        message.textContent = "Geocerca guardada con ubicación real.";
 
         nameInput.value = "";
         radiusInput.value = "";
 
         loadGeofences();
+
+        setTimeout(() => {
+          location.reload();
+        }, 800);
+
       } else {
         message.textContent = "No se pudo guardar la geocerca.";
       }
     } catch (error) {
-      message.textContent = "Error al conectar con el backend.";
+      message.textContent = "Error: debes permitir el acceso a la ubicación.";
     }
   });
 }
@@ -595,11 +747,11 @@ if (historyDetailsButton) {
 
     alert(
       `Detalle del recorrido\n\n` +
-      `Dependiente: Juan Pérez\n` +
-      `Fecha: 31/05/2026\n` +
-      `Salida: 07:15 AM\n` +
-      `Llegada: 07:45 AM\n` +
-      `Destino: Escuela Belaunde\n` +
+      `Dependiente: ${historyDependentSelect ? historyDependentSelect.value : "Dependiente"}\n` +
+      `Fecha: ${historyDate ? historyDate.textContent : "Fecha actual"}\n` +
+      `Salida: ${historyStartTime ? historyStartTime.textContent : "Hora actual"}\n` +
+      `Llegada: ${historyEndTime ? historyEndTime.textContent : "Hora estimada"}\n` +
+      `Destino: ${historyDestination ? historyDestination.textContent : "Destino"}\n` +
       `Latitud: ${latitude}\n` +
       `Longitud: ${longitude}\n` +
       `Estado: ${status}`
@@ -651,21 +803,26 @@ if (historyMapElement) {
         .bindPopup("Ubicación actual del dependiente")
         .openPopup();
 
-      L.marker([-12.0453, -77.0311])
-        .addTo(map)
-        .bindPopup("Casa");
+      const geofencesResponse = await fetch(`${API_URL}/geofences`);
+      const geofences = await geofencesResponse.json();
+      const validGeofences = geofences.filter(g => g.latitude && g.longitude);
 
-      L.marker([-12.0492, -77.0365])
-        .addTo(map)
-        .bindPopup("Escuela Belaunde");
+      if (validGeofences.length > 0) {
+        const destination = validGeofences[0];
+        const destinationLat = parseFloat(destination.latitude);
+        const destinationLon = parseFloat(destination.longitude);
 
-      L.polyline([
-        [-12.0453, -77.0311],
-        [latitude, longitude],
-        [-12.0492, -77.0365]
-      ], {
-        color: "purple"
-      }).addTo(map);
+        L.marker([destinationLat, destinationLon])
+          .addTo(map)
+          .bindPopup(`Destino: ${destination.name}`);
+
+        L.polyline([
+          [latitude, longitude],
+          [destinationLat, destinationLon]
+        ], {
+          color: "purple"
+        }).addTo(map);
+      }
 
     } catch (error) {
       console.log("Error cargando mapa historial:", error);
@@ -688,7 +845,7 @@ if (geofenceMapElement) {
       const latitude = parseFloat(trackingData.latitude);
       const longitude = parseFloat(trackingData.longitude);
 
-      const map = L.map("geofenceMap").setView([latitude, longitude], 14);
+      const map = L.map("geofenceMap").setView([latitude, longitude], 16);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "© OpenStreetMap contributors"
@@ -702,17 +859,31 @@ if (geofenceMapElement) {
       const geofencesResponse = await fetch(`${API_URL}/geofences`);
       const geofences = await geofencesResponse.json();
 
-      geofences.forEach((geofence, index) => {
-        const offset = index * 0.003;
+      geofences.forEach(geofence => {
+        if (!geofence.latitude || !geofence.longitude) {
+          return;
+        }
 
-        L.circle([latitude + offset, longitude + offset], {
+        const geofenceLat = parseFloat(geofence.latitude);
+        const geofenceLon = parseFloat(geofence.longitude);
+
+        const circle = L.circle([geofenceLat, geofenceLon], {
           radius: geofence.radius,
-          color: "purple",
-          fillColor: "#a855f7",
-          fillOpacity: 0.18
-        })
+          color: geofence.radius <= 100 ? "red" : "purple",
+          fillColor: geofence.radius <= 100 ? "#ef4444" : "#a855f7",
+          fillOpacity: 0.2
+        }).addTo(map);
+
+        circle.bindPopup(`${geofence.name} - ${geofence.radius} m`);
+
+        circle.bindTooltip(`${geofence.name} - ${geofence.radius}m`, {
+          permanent: true,
+          direction: "top"
+        });
+
+        L.marker([geofenceLat, geofenceLon])
           .addTo(map)
-          .bindPopup(`${geofence.name} - ${geofence.radius}m`);
+          .bindPopup(`Centro: ${geofence.name}`);
       });
 
     } catch (error) {
@@ -720,7 +891,9 @@ if (geofenceMapElement) {
     }
   }
 
-  loadGeofenceMap();
+  setTimeout(() => {
+    loadGeofenceMap();
+  }, 1500);
 }
 
 /* ESTADÍSTICAS DASHBOARD */
@@ -741,6 +914,9 @@ if (dashboardMembersCount && dashboardAlertsCount && dashboardGeofencesCount) {
       const alertsResponse = await fetch(`${API_URL}/alerts`);
       const alerts = await alertsResponse.json();
 
+      const trackingResponse = await fetch(`${API_URL}/tracking/1`);
+      const trackingData = await trackingResponse.json();
+
       const dependents = members.filter(member => member.role === "Dependiente").length;
       const tutors = members.filter(member => member.role === "Tutor").length + 1;
 
@@ -755,34 +931,227 @@ if (dashboardMembersCount && dashboardAlertsCount && dashboardGeofencesCount) {
       dashboardGeofencesCount.textContent = `${geofences.length} activas`;
       dashboardAlertsCount.textContent = `${alerts.length} activas`;
 
+      const dashboardLastAlert = document.getElementById("dashboardLastAlert");
+
+      if (dashboardLastAlert) {
+        if (alerts.length === 0) {
+          dashboardLastAlert.textContent = "Sin alertas recientes";
+        } else {
+          const lastAlert = alerts[0];
+
+          const alertDate = new Date(lastAlert.createdAt + "Z").toLocaleString("es-PE", {
+            timeZone: "America/Lima",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          });
+
+          dashboardLastAlert.textContent = `${lastAlert.message} - ${alertDate}`;
+        }
+      }
+
+      const dashboardSafeZone = document.getElementById("dashboardSafeZone");
+
+      if (dashboardSafeZone) {
+        const validGeofences = geofences.filter(g => g.latitude && g.longitude);
+
+        if (validGeofences.length === 0) {
+          dashboardSafeZone.textContent = "Sin zona configurada";
+        } else {
+          const currentLat = parseFloat(trackingData.latitude);
+          const currentLon = parseFloat(trackingData.longitude);
+
+          function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const toRad = value => value * Math.PI / 180;
+
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+
+            const a =
+              Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(toRad(lat1)) *
+              Math.cos(toRad(lat2)) *
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
+
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c;
+          }
+
+          let insideAnyGeofence = false;
+          let closestGeofence = null;
+          let closestDistance = Infinity;
+
+          validGeofences.forEach(geofence => {
+            const geofenceLat = parseFloat(geofence.latitude);
+            const geofenceLon = parseFloat(geofence.longitude);
+
+            const distance = calculateDistanceMeters(
+              currentLat,
+              currentLon,
+              geofenceLat,
+              geofenceLon
+            );
+
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestGeofence = geofence;
+            }
+
+            if (distance <= geofence.radius) {
+              insideAnyGeofence = true;
+              closestGeofence = geofence;
+            }
+          });
+
+          if (insideAnyGeofence) {
+            dashboardSafeZone.textContent = `🟢 Dentro de ${closestGeofence.name}`;
+          } else {
+            dashboardSafeZone.textContent =
+              `🔴 Fuera de ${closestGeofence.name} (${Math.round(closestDistance)} m)`;
+          }
+
+          const dashboardSafeDistance = document.getElementById("dashboardSafeDistance");
+
+          if (dashboardSafeDistance) {
+            dashboardSafeDistance.textContent = `${Math.round(closestDistance)} m`;
+          }
+        }
+      }
+
     } catch (error) {
       dashboardMembersCount.textContent = "Error";
       dashboardGeofencesCount.textContent = "Error";
       dashboardAlertsCount.textContent = "Error";
+
+      const dashboardSafeZone = document.getElementById("dashboardSafeZone");
+      if (dashboardSafeZone) {
+        dashboardSafeZone.textContent = "Error";
+      }
+
+      const dashboardSafeDistance = document.getElementById("dashboardSafeDistance");
+      if (dashboardSafeDistance) {
+        dashboardSafeDistance.textContent = "Error";
+      }
     }
   }
 
   loadDashboardStats();
 }
 
-/* ESTADO SEGURO DASHBOARD */
+/* ELIMINAR ALERTA */
 
-const dashboardSafeStatus = document.getElementById("dashboardSafeStatus");
+async function deleteAlert(id) {
+  const confirmDelete = confirm("¿Deseas eliminar esta alerta?");
 
-if (dashboardSafeStatus) {
-  async function loadDashboardSafeStatus() {
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/alerts/${id}`, {
+      method: "DELETE"
+    });
+
+    if (response.ok) {
+      alert("Alerta eliminada correctamente.");
+      loadAlerts();
+    } else {
+      alert("No se pudo eliminar la alerta.");
+    }
+  } catch (error) {
+    alert("Error al conectar con el backend.");
+  }
+}
+
+/* HISTORIAL - DEPENDIENTES, FECHA, HORA Y DESTINO */
+
+const historyDependentSelect = document.getElementById("historyDependentSelect");
+const historyDate = document.getElementById("historyDate");
+const historyStartTime = document.getElementById("historyStartTime");
+const historyEndTime = document.getElementById("historyEndTime");
+
+if (historyDependentSelect && historyDate) {
+  async function loadHistoryDependents() {
     try {
-      const response = await fetch(`${API_URL}/tracking/1`);
+      const response = await fetch(`${API_URL}/family-members`);
+      const members = await response.json();
 
-      if (response.ok) {
-        dashboardSafeStatus.textContent = "🟢 Dentro de zona segura";
-      } else {
-        dashboardSafeStatus.textContent = "🟡 Estado no disponible";
+      const dependents = members.filter(member => member.role === "Dependiente");
+
+      historyDependentSelect.innerHTML = "";
+
+      if (dependents.length === 0) {
+        historyDependentSelect.innerHTML = `<option value="">Sin dependientes</option>`;
+        return;
       }
+
+      dependents.forEach(member => {
+        const option = document.createElement("option");
+        option.value = member.fullName;
+        option.textContent = member.fullName;
+        historyDependentSelect.appendChild(option);
+      });
+
     } catch (error) {
-      dashboardSafeStatus.textContent = "🔴 Error al consultar estado";
+      historyDependentSelect.innerHTML = `<option value="">Error al cargar</option>`;
     }
   }
 
-  loadDashboardSafeStatus();
+  const now = new Date();
+
+  historyDate.textContent = now.toLocaleDateString("es-PE", {
+    timeZone: "America/Lima",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+
+  const endTime = new Date(now.getTime() + 30 * 60000);
+
+  if (historyStartTime && historyEndTime) {
+    historyStartTime.textContent = now.toLocaleTimeString("es-PE", {
+      timeZone: "America/Lima",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+
+    historyEndTime.textContent = endTime.toLocaleTimeString("es-PE", {
+      timeZone: "America/Lima",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+  }
+
+  loadHistoryDependents();
+}
+
+const historyDestination = document.getElementById("historyDestination");
+
+if (historyDestination) {
+  async function loadHistoryDestination() {
+    try {
+      const response = await fetch(`${API_URL}/geofences`);
+      const geofences = await response.json();
+
+      if (geofences.length === 0) {
+        historyDestination.textContent = "Sin geocerca registrada";
+        return;
+      }
+
+      historyDestination.textContent = geofences[0].name;
+
+    } catch (error) {
+      historyDestination.textContent = "Error al cargar destino";
+    }
+  }
+
+  loadHistoryDestination();
 }
