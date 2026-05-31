@@ -162,7 +162,14 @@ if (dashboardLocation) {
       const data = await response.json();
 
       if (response.ok) {
-        dashboardLocation.textContent = `Lat: ${data.latitude}, Lng: ${data.longitude}`;
+        const addressResponse = await fetch(
+  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${data.latitude}&lon=${data.longitude}`
+);
+
+const addressData = await addressResponse.json();
+
+dashboardLocation.textContent =
+  addressData.display_name || `Lat: ${data.latitude}, Lng: ${data.longitude}`;
       } else {
         dashboardLocation.textContent = "No se pudo cargar ubicación";
       }
@@ -605,10 +612,17 @@ if (dashboardMembersCount && dashboardAlertsCount && dashboardGeofencesCount) {
       await alertsResponse.json();
 
       const dependents = members.filter(member => member.role === "Dependiente").length;
+const tutors = members.filter(member => member.role === "Tutor").length + 1;
 
-      dashboardMembersCount.textContent = `${dependents} dependientes`;
-      dashboardGeofencesCount.textContent = `${geofences.length} activas`;
-      dashboardAlertsCount.textContent = "1 activa";
+dashboardMembersCount.textContent = `${dependents} dependientes`;
+
+const dashboardTutorsCount = document.getElementById("dashboardTutorsCount");
+if (dashboardTutorsCount) {
+  dashboardTutorsCount.textContent = `${tutors} tutores`;
+}
+
+dashboardGeofencesCount.textContent = `${geofences.length} activas`;
+dashboardAlertsCount.textContent = "1 activa";
 
     } catch (error) {
       dashboardMembersCount.textContent = "Error";
