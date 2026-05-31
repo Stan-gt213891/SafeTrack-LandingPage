@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Geocercas - SafeTrack</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 <body>
 
@@ -33,31 +34,14 @@
 
   <section class="geofence-content">
 
-    <div class="geofence-map">
-      <div class="geo-circle geo-home"></div>
-      <div class="geo-circle geo-school"></div>
-
-      <div class="point red-point geo-red"></div>
-      <div class="point green-point geo-green"></div>
-
-      <span class="geo-label home-label">Casa</span>
-      <span class="geo-label school-label">Colegio</span>
-    </div>
+  <div class="geofence-map">
+  <div id="geofenceMap"></div>
+</div>
 
    <aside class="geofence-panel" id="geofencePanel">
       <h2>GEOCERCAS CONFIGURADAS</h2>
 
-      <div class="geofence-item">
-        <h3>🏠 CASA</h3>
-        <p>RADIO - 300 M</p>
-        <p>Estado: Activa</p>
-      </div>
-
-      <div class="geofence-item">
-        <h3>🏫 COLEGIO</h3>
-        <p>RADIO - 500 M</p>
-        <p>Estado: Activa</p>
-      </div>
+    
 
       <div class="geofence-item">
         <h3>📍 Ubicación actual</h3>
@@ -82,7 +66,7 @@
 </section>
 
 </main>
-
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

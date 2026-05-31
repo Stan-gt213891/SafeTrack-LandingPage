@@ -294,11 +294,17 @@ async function loadFamilyMembers() {
       const newCard = document.createElement("div");
       newCard.classList.add("member-card", "dynamic-member-card");
 
-      newCard.innerHTML = `
-        <h2>${member.role === "Tutor" ? "👨" : "👤"} ${member.fullName}</h2>
-        <p>${member.role}</p>
-        <p>Edad: ${member.age} años</p>
-      `;
+     newCard.innerHTML = `
+  <h2>${member.role === "Tutor" ? "👨" : "👤"} ${member.fullName}</h2>
+  <p>${member.role}</p>
+  <p>Edad: ${member.age} años</p>
+
+  <button
+    class="delete-member-btn"
+    onclick="deleteFamilyMember(${member.id})">
+    🗑️ Eliminar
+  </button>
+`;
 
       membersGrid.insertBefore(newCard, summaryCard);
 
@@ -384,10 +390,16 @@ async function loadGeofences() {
       item.classList.add("geofence-item", "dynamic-geofence-item");
 
       item.innerHTML = `
-        <h3>📍 ${geofence.name}</h3>
-        <p>RADIO - ${geofence.radius} M</p>
-        <p>Estado: ${geofence.status}</p>
-      `;
+  <h3>📍 ${geofence.name}</h3>
+  <p>RADIO - ${geofence.radius} M</p>
+  <p>Estado: ${geofence.status}</p>
+
+  <button
+    class="delete-member-btn"
+    onclick="deleteGeofence(${geofence.id})">
+    🗑️ Eliminar
+  </button>
+`;
 
       geofencePanel.appendChild(item);
     });
@@ -446,4 +458,240 @@ if (addGeofenceButton) {
     }
 
   });
+}
+const historyDetailsButton = document.getElementById("historyDetailsButton");
+
+if (historyDetailsButton) {
+  historyDetailsButton.addEventListener("click", () => {
+    const latitude = document.getElementById("historyLatitude").textContent;
+    const longitude = document.getElementById("historyLongitude").textContent;
+    const status = document.getElementById("historyStatus").textContent;
+
+    alert(
+      `Detalle del recorrido\n\n` +
+      `Dependiente: Juan Pérez\n` +
+      `Fecha: 31/05/2026\n` +
+      `Salida: 07:15 AM\n` +
+      `Llegada: 07:45 AM\n` +
+      `Destino: Escuela Belaunde\n` +
+      `Latitud: ${latitude}\n` +
+      `Longitud: ${longitude}\n` +
+      `Estado: ${status}`
+    );
+  });
+}
+const lastUpdateDate = document.getElementById("lastUpdateDate");
+
+if (lastUpdateDate) {
+  const now = new Date();
+
+  const formattedDate = now.toLocaleString("es-PE", {
+    timeZone: "America/Lima",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+
+  lastUpdateDate.textContent = formattedDate;
+}
+const historyMapElement = document.getElementById("historyMap");
+
+if (historyMapElement) {
+  async function loadHistoryMap() {
+    try {
+      const response = await fetch(`${API_URL}/tracking/1`);
+      const data = await response.json();
+
+      const latitude = parseFloat(data.latitude);
+      const longitude = parseFloat(data.longitude);
+
+      const map = L.map("historyMap").setView([latitude, longitude], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+
+      L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup("Ubicación actual del dependiente")
+        .openPopup();
+
+      L.marker([-12.0453, -77.0311])
+        .addTo(map)
+        .bindPopup("Casa");
+
+      L.marker([-12.0492, -77.0365])
+        .addTo(map)
+        .bindPopup("Escuela Belaunde");
+
+      L.polyline([
+        [-12.0453, -77.0311],
+        [latitude, longitude],
+        [-12.0492, -77.0365]
+      ], {
+        color: "purple"
+      }).addTo(map);
+
+    } catch (error) {
+      console.log("Error cargando mapa historial:", error);
+    }
+  }
+
+  loadHistoryMap();
+}
+const geofenceMapElement = document.getElementById("geofenceMap");
+
+if (geofenceMapElement) {
+  async function loadGeofenceMap() {
+    try {
+      const trackingResponse = await fetch(`${API_URL}/tracking/1`);
+      const trackingData = await trackingResponse.json();
+
+      const latitude = parseFloat(trackingData.latitude);
+      const longitude = parseFloat(trackingData.longitude);
+
+      const map = L.map("geofenceMap").setView([latitude, longitude], 14);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors"
+      }).addTo(map);
+
+      L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup("Ubicación actual del dependiente")
+        .openPopup();
+
+
+      const geofencesResponse = await fetch(`${API_URL}/geofences`);
+      const geofences = await geofencesResponse.json();
+
+      geofences.forEach((geofence, index) => {
+        const offset = index * 0.003;
+
+        L.circle([latitude + offset, longitude + offset], {
+          radius: geofence.radius,
+          color: "purple",
+          fillColor: "#a855f7",
+          fillOpacity: 0.18
+        })
+          .addTo(map)
+          .bindPopup(`${geofence.name} - ${geofence.radius}m`);
+      });
+
+    } catch (error) {
+      console.log("Error cargando mapa de geocercas:", error);
+    }
+  }
+
+  loadGeofenceMap();
+}
+const dashboardMembersCount = document.getElementById("dashboardMembersCount");
+const dashboardAlertsCount = document.getElementById("dashboardAlertsCount");
+const dashboardGeofencesCount = document.getElementById("dashboardGeofencesCount");
+
+if (dashboardMembersCount && dashboardAlertsCount && dashboardGeofencesCount) {
+  async function loadDashboardStats() {
+    try {
+      const membersResponse = await fetch(`${API_URL}/family-members`);
+      const members = await membersResponse.json();
+
+      const geofencesResponse = await fetch(`${API_URL}/geofences`);
+      const geofences = await geofencesResponse.json();
+
+      const alertsResponse = await fetch(`${API_URL}/alerts`);
+      await alertsResponse.json();
+
+      const dependents = members.filter(member => member.role === "Dependiente").length;
+
+      dashboardMembersCount.textContent = `${dependents} dependientes`;
+      dashboardGeofencesCount.textContent = `${geofences.length} activas`;
+      dashboardAlertsCount.textContent = "1 activa";
+
+    } catch (error) {
+      dashboardMembersCount.textContent = "Error";
+      dashboardGeofencesCount.textContent = "Error";
+      dashboardAlertsCount.textContent = "Error";
+    }
+  }
+
+  loadDashboardStats();
+}
+async function deleteFamilyMember(id) {
+
+  const confirmDelete = confirm(
+    "¿Deseas eliminar este miembro?"
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `${API_URL}/family-members/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    if (response.ok) {
+
+      alert("Miembro eliminado correctamente.");
+
+      loadFamilyMembers();
+
+    } else {
+
+      alert("No se pudo eliminar.");
+
+    }
+
+  } catch (error) {
+
+    alert("Error al conectar con el backend.");
+
+  }
+}
+async function deleteGeofence(id) {
+
+  const confirmDelete = confirm(
+    "¿Deseas eliminar esta geocerca?"
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `${API_URL}/geofences/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    if (response.ok) {
+
+      alert("Geocerca eliminada correctamente.");
+
+      loadGeofences();
+
+      location.reload();
+
+    } else {
+
+      alert("No se pudo eliminar.");
+
+    }
+
+  } catch (error) {
+
+    alert("Error al conectar con el backend.");
+
+  }
 }

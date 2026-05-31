@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Historial de Rutas - SafeTrack</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 </head>
 <body>
 
@@ -26,20 +27,8 @@
 <main class="history-page">
 
   <section class="map-area">
-
-    <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <line x1="43" y1="29" x2="63" y2="58"
-        stroke="#d14bff"
-        stroke-width="0.5"/>
-    </svg>
-
-    <div class="point red-point"></div>
-    <div class="point green-point"></div>
-
-    <span class="route-text school">Hijo - Escuela Belaunde</span>
-    <span class="route-text home">Casa</span>
-
-  </section>
+  <div id="historyMap"></div>
+</section>
 
   <aside class="history-panel">
     <h2>CONSULTAR HISTORIAL</h2>
@@ -59,8 +48,9 @@
       <p>🟢 <strong>Estado:</strong><br><span id="historyStatus">Cargando estado...</span></p>
     </div>
 
-    <a href="#" class="details-btn">Ver detalles</a>
-
+    <button id="historyDetailsButton" class="details-btn">
+  Ver detalles
+</button>
     <div class="legend">
       <p><span class="legend-dot green"></span> INICIO</p>
       <p><span class="legend-dot red"></span> DESTINO</p>
@@ -68,7 +58,7 @@
   </aside>
 
 </main>
-
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
