@@ -1,3 +1,17 @@
+const privatePages = [
+  "dashboard.html",
+  "miembros.html",
+  "historial.html",
+  "geocercas.html",
+  "alertas.html"
+];
+
+const currentPage = window.location.pathname.split("/").pop();
+const token = localStorage.getItem("safeTrackToken");
+
+if (privatePages.includes(currentPage) && !token) {
+  window.location.href = "login.html";
+}
 const API_URL = "http://localhost:5298/api/v1";
 
 const registerButton = document.getElementById("registerButton");
@@ -255,4 +269,181 @@ if (alertStatus && backendAlertMessage) {
   }
 
   loadAlerts();
+}
+const addMemberButton = document.getElementById("addMemberButton");
+
+async function loadFamilyMembers() {
+  const membersGrid = document.getElementById("membersGrid");
+  const summaryCard = document.getElementById("summaryCard");
+  const membersCount = document.getElementById("membersCount");
+  const dependentsCount = document.getElementById("dependentsCount");
+  const summaryTotal = document.getElementById("summaryTotal");
+
+  if (!membersGrid || !summaryCard) return;
+
+  try {
+    const response = await fetch(`${API_URL}/family-members`);
+    const members = await response.json();
+
+    const dynamicCards = document.querySelectorAll(".dynamic-member-card");
+    dynamicCards.forEach(card => card.remove());
+
+    let dependents = 2;
+
+    members.forEach(member => {
+      const newCard = document.createElement("div");
+      newCard.classList.add("member-card", "dynamic-member-card");
+
+      newCard.innerHTML = `
+        <h2>${member.role === "Tutor" ? "👨" : "👤"} ${member.fullName}</h2>
+        <p>${member.role}</p>
+        <p>Edad: ${member.age} años</p>
+      `;
+
+      membersGrid.insertBefore(newCard, summaryCard);
+
+      if (member.role === "Dependiente") {
+        dependents++;
+      }
+    });
+
+    const total = 3 + members.length;
+
+    membersCount.textContent = total;
+    dependentsCount.textContent = dependents;
+    summaryTotal.textContent = total;
+
+  } catch (error) {
+    console.log("Error cargando miembros:", error);
+  }
+}
+
+if (addMemberButton) {
+  loadFamilyMembers();
+
+  addMemberButton.addEventListener("click", async () => {
+    const nameInput = document.getElementById("newMemberName");
+    const ageInput = document.getElementById("newMemberAge");
+    const roleInput = document.getElementById("newMemberRole");
+    const message = document.getElementById("memberMessage");
+
+    const fullName = nameInput.value.trim();
+    const age = parseInt(ageInput.value.trim());
+    const role = roleInput.value;
+
+    if (!fullName || !age) {
+      message.textContent = "Completa el nombre y la edad.";
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/family-members`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fullName,
+          age,
+          role
+        })
+      });
+
+      if (response.ok) {
+        message.textContent = "Miembro guardado en Railway correctamente.";
+
+        nameInput.value = "";
+        ageInput.value = "";
+        roleInput.value = "Dependiente";
+
+        loadFamilyMembers();
+      } else {
+        message.textContent = "No se pudo guardar el miembro.";
+      }
+    } catch (error) {
+      message.textContent = "Error al conectar con el backend.";
+    }
+  });
+}
+const addGeofenceButton = document.getElementById("addGeofenceButton");
+
+async function loadGeofences() {
+  const geofencePanel = document.getElementById("geofencePanel");
+
+  if (!geofencePanel) return;
+
+  try {
+    const response = await fetch(`${API_URL}/geofences`);
+    const geofences = await response.json();
+
+    const dynamicGeofences = document.querySelectorAll(".dynamic-geofence-item");
+    dynamicGeofences.forEach(item => item.remove());
+
+    geofences.forEach(geofence => {
+      const item = document.createElement("div");
+      item.classList.add("geofence-item", "dynamic-geofence-item");
+
+      item.innerHTML = `
+        <h3>📍 ${geofence.name}</h3>
+        <p>RADIO - ${geofence.radius} M</p>
+        <p>Estado: ${geofence.status}</p>
+      `;
+
+      geofencePanel.appendChild(item);
+    });
+
+  } catch (error) {
+    console.log("Error cargando geocercas:", error);
+  }
+}
+
+if (addGeofenceButton) {
+
+  loadGeofences();
+
+  addGeofenceButton.addEventListener("click", async () => {
+
+    const nameInput = document.getElementById("newGeofenceName");
+    const radiusInput = document.getElementById("newGeofenceRadius");
+    const message = document.getElementById("geofenceMessage");
+
+    const name = nameInput.value.trim();
+    const radius = parseInt(radiusInput.value.trim());
+
+    if (!name || !radius) {
+      message.textContent = "Completa el nombre y el radio.";
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/geofences`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          radius,
+          status: "Activa"
+        })
+      });
+
+      if (response.ok) {
+
+        message.textContent = "Geocerca guardada correctamente.";
+
+        nameInput.value = "";
+        radiusInput.value = "";
+
+        loadGeofences();
+
+      } else {
+        message.textContent = "No se pudo guardar la geocerca.";
+      }
+
+    } catch (error) {
+      message.textContent = "Error al conectar con el backend.";
+    }
+
+  });
 }

@@ -28,10 +28,10 @@
   <h1>GESTIÓN DE MIEMBROS</h1>
 
   <p class="members-total">
-    TOTAL MIEMBROS REGISTRADOS: 3
+    TOTAL MIEMBROS REGISTRADOS: <span id="membersCount">3</span>
   </p>
 
-  <section class="members-grid">
+  <section class="members-grid" id="membersGrid">
 
     <div class="member-card">
       <h2>👨 <span id="memberFullName">Usuario</span></h2>
@@ -51,18 +51,31 @@
       <p>Edad: 10 años</p>
     </div>
 
-    <div class="member-card summary-card">
+    <div class="member-card summary-card" id="summaryCard">
       <h2>📊 Resumen</h2>
       <p>Tutores: 1</p>
-      <p>Dependientes: 2</p>
-      <p>Total: 3</p>
+      <p>Dependientes: <span id="dependentsCount">2</span></p>
+      <p>Total: <span id="summaryTotal">3</span></p>
     </div>
 
   </section>
 
-  <a href="#" class="add-member-btn">
-    + AGREGAR MIEMBRO
-  </a>
+  <section class="add-member-form">
+    <h2>Agregar nuevo miembro</h2>
+
+    <input type="text" id="newMemberName" placeholder="Nombre del miembro">
+    <input type="number" id="newMemberAge" placeholder="Edad">
+    <select id="newMemberRole">
+  <option value="Dependiente">Dependiente</option>
+  <option value="Tutor">Tutor</option>
+</select>
+
+    <button id="addMemberButton" class="add-member-btn">
+      + AGREGAR MIEMBRO
+    </button>
+
+    <p id="memberMessage"></p>
+  </section>
 
 </main>
 

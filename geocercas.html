@@ -44,7 +44,7 @@
       <span class="geo-label school-label">Colegio</span>
     </div>
 
-    <aside class="geofence-panel">
+   <aside class="geofence-panel" id="geofencePanel">
       <h2>GEOCERCAS CONFIGURADAS</h2>
 
       <div class="geofence-item">
@@ -68,9 +68,18 @@
 
   </section>
 
-  <a href="#" class="new-geofence-btn">
+  <section class="add-member-form">
+  <h2>Agregar nueva geocerca</h2>
+
+  <input type="text" id="newGeofenceName" placeholder="Nombre de geocerca">
+  <input type="number" id="newGeofenceRadius" placeholder="Radio en metros">
+
+  <button id="addGeofenceButton" class="new-geofence-btn">
     + NUEVA GEOCERCA
-  </a>
+  </button>
+
+  <p id="geofenceMessage"></p>
+</section>
 
 </main>
 

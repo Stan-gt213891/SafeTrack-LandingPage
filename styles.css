@@ -879,3 +879,41 @@ footer h3 {
   font-style: italic;
   margin-bottom: 15px;
 }
+.add-member-form {
+  max-width: 500px;
+  margin: 20px auto 0;
+  background: #d9d9d9;
+  padding: 25px;
+  text-align: center;
+}
+
+.add-member-form h2 {
+  font-size: 20px;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.add-member-form input {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 15px;
+  padding: 0 12px;
+  border: 1px solid #999;
+  background: #f2f2f2;
+}
+
+#memberMessage {
+  margin-top: 15px;
+  font-weight: bold;
+  font-style: italic;
+}
+.add-member-form select {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin-bottom: 15px;
+  padding: 0 12px;
+  border: 1px solid #999;
+  background: #f2f2f2;
+}
