@@ -108,15 +108,6 @@ if (dashboardFullName && dashboardRole) {
   }
 }
 
-if (dashboardEmail) {
-  const savedEmail = localStorage.getItem("safeTrackEmail");
-
-  if (!savedEmail) {
-    window.location.href = "login.html";
-  } else {
-    dashboardEmail.textContent = savedEmail;
-  }
-}
 
 const logoutButton = document.getElementById("logoutButton");
 
@@ -167,4 +158,101 @@ if (dashboardLocation) {
   }
 
   loadDashboardLocation();
+}
+const memberFullName = document.getElementById("memberFullName");
+const memberRole = document.getElementById("memberRole");
+const memberEmail = document.getElementById("memberEmail");
+
+if (memberFullName && memberRole && memberEmail) {
+  const savedFullName = localStorage.getItem("safeTrackFullName");
+  const savedRole = localStorage.getItem("safeTrackRole");
+  const savedEmail = localStorage.getItem("safeTrackEmail");
+
+  if (!savedFullName) {
+    window.location.href = "login.html";
+  } else {
+    memberFullName.textContent = savedFullName;
+    memberRole.textContent = savedRole || "Tutor";
+    memberEmail.textContent = savedEmail || "Sin correo";
+  }
+}
+const historyLatitude = document.getElementById("historyLatitude");
+const historyLongitude = document.getElementById("historyLongitude");
+const historyStatus = document.getElementById("historyStatus");
+
+if (historyLatitude && historyLongitude && historyStatus) {
+  async function loadHistoryLocation() {
+    try {
+      const response = await fetch(`${API_URL}/tracking/1`);
+      const data = await response.json();
+
+      if (response.ok) {
+        historyLatitude.textContent = data.latitude;
+        historyLongitude.textContent = data.longitude;
+        historyStatus.textContent = data.status || "Ruta segura";
+      } else {
+        historyLatitude.textContent = "No disponible";
+        historyLongitude.textContent = "No disponible";
+        historyStatus.textContent = "No se pudo cargar historial";
+      }
+    } catch (error) {
+      historyLatitude.textContent = "Error";
+      historyLongitude.textContent = "Error";
+      historyStatus.textContent = "Error de conexión";
+    }
+  }
+
+  loadHistoryLocation();
+}
+const geofenceStatus = document.getElementById("geofenceStatus");
+const geofenceLatitude = document.getElementById("geofenceLatitude");
+const geofenceLongitude = document.getElementById("geofenceLongitude");
+
+if (geofenceStatus && geofenceLatitude && geofenceLongitude) {
+  async function loadGeofenceLocation() {
+    try {
+      const response = await fetch(`${API_URL}/tracking/1`);
+      const data = await response.json();
+
+      if (response.ok) {
+        geofenceStatus.textContent = "🟢 Dependiente dentro de zona segura";
+        geofenceLatitude.textContent = data.latitude;
+        geofenceLongitude.textContent = data.longitude;
+      } else {
+        geofenceStatus.textContent = "🔴 No se pudo validar la zona segura";
+        geofenceLatitude.textContent = "No disponible";
+        geofenceLongitude.textContent = "No disponible";
+      }
+    } catch (error) {
+      geofenceStatus.textContent = "🔴 Error al conectar con Tracking Service";
+      geofenceLatitude.textContent = "Error";
+      geofenceLongitude.textContent = "Error";
+    }
+  }
+
+  loadGeofenceLocation();
+}
+const alertStatus = document.getElementById("alertStatus");
+const backendAlertMessage = document.getElementById("backendAlertMessage");
+
+if (alertStatus && backendAlertMessage) {
+  async function loadAlerts() {
+    try {
+      const response = await fetch(`${API_URL}/alerts`);
+      const data = await response.json();
+
+      if (response.ok) {
+        alertStatus.textContent = "🔴 Estado actual: Emergencia detectada";
+        backendAlertMessage.textContent = `🔔 ${data.message}`;
+      } else {
+        alertStatus.textContent = "🟡 No se pudieron cargar alertas";
+        backendAlertMessage.textContent = "Sin información disponible";
+      }
+    } catch (error) {
+      alertStatus.textContent = "🔴 Error al conectar con Alert Service";
+      backendAlertMessage.textContent = "Error de conexión con backend";
+    }
+  }
+
+  loadAlerts();
 }

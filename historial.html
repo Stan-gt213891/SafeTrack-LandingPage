@@ -19,6 +19,7 @@
     <a href="alertas.html">ALERTAS</a>
     <a href="geocercas.html">GEOCERCAS</a>
     <a href="historial.html">HISTORIAL</a>
+    <a href="#" id="logoutButton">CERRAR SESIÓN</a>
   </nav>
 </header>
 
@@ -28,8 +29,8 @@
 
     <svg class="route-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
       <line x1="43" y1="29" x2="63" y2="58"
-stroke="#d14bff"
-stroke-width="0.5"/>
+        stroke="#d14bff"
+        stroke-width="0.5"/>
     </svg>
 
     <div class="point red-point"></div>
@@ -49,11 +50,13 @@ stroke-width="0.5"/>
     </p>
 
     <div class="history-card">
-      <p>📅 <strong>Fecha:</strong><br>15/05/2026</p>
+      <p>📅 <strong>Fecha:</strong><br>31/05/2026</p>
       <p>🕘 <strong>Salida:</strong><br>07:15 AM</p>
       <p>🕘 <strong>Llegada:</strong><br>07:45 AM</p>
       <p>📍 <strong>Destino:</strong><br>Escuela Belaunde</p>
-      <p>🟢 <strong>Estado:</strong><br>Ruta segura</p>
+      <p>🌎 <strong>Latitud:</strong><br><span id="historyLatitude">Cargando...</span></p>
+      <p>🌎 <strong>Longitud:</strong><br><span id="historyLongitude">Cargando...</span></p>
+      <p>🟢 <strong>Estado:</strong><br><span id="historyStatus">Cargando estado...</span></p>
     </div>
 
     <a href="#" class="details-btn">Ver detalles</a>
@@ -66,5 +69,6 @@ stroke-width="0.5"/>
 
 </main>
 
+<script src="script.js"></script>
 </body>
 </html>

@@ -19,6 +19,7 @@
     <a href="alertas.html">ALERTAS</a>
     <a href="geocercas.html">GEOCERCAS</a>
     <a href="historial.html">HISTORIAL</a>
+    <a href="#" id="logoutButton">CERRAR SESIÓN</a>
   </nav>
 </header>
 
@@ -26,8 +27,8 @@
 
   <h1>GESTIÓN DE GEOCERCAS</h1>
 
-  <p class="safe-status">
-    🟢 Dependiente dentro de zona segura
+  <p class="safe-status" id="geofenceStatus">
+    🟢 Cargando estado de ubicación...
   </p>
 
   <section class="geofence-content">
@@ -49,11 +50,19 @@
       <div class="geofence-item">
         <h3>🏠 CASA</h3>
         <p>RADIO - 300 M</p>
+        <p>Estado: Activa</p>
       </div>
 
       <div class="geofence-item">
         <h3>🏫 COLEGIO</h3>
         <p>RADIO - 500 M</p>
+        <p>Estado: Activa</p>
+      </div>
+
+      <div class="geofence-item">
+        <h3>📍 Ubicación actual</h3>
+        <p>Latitud: <span id="geofenceLatitude">Cargando...</span></p>
+        <p>Longitud: <span id="geofenceLongitude">Cargando...</span></p>
       </div>
     </aside>
 
@@ -65,5 +74,6 @@
 
 </main>
 
+<script src="script.js"></script>
 </body>
 </html>

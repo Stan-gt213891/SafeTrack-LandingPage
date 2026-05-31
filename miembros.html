@@ -19,6 +19,7 @@
     <a href="alertas.html">ALERTAS</a>
     <a href="geocercas.html">GEOCERCAS</a>
     <a href="historial.html">HISTORIAL</a>
+    <a href="#" id="logoutButton">CERRAR SESIÓN</a>
   </nav>
 </header>
 
@@ -33,9 +34,9 @@
   <section class="members-grid">
 
     <div class="member-card">
-      <h2>👨 Carlos Torres</h2>
-      <p>Tutor principal</p>
-      <p>Edad: 40 años</p>
+      <h2>👨 <span id="memberFullName">Usuario</span></h2>
+      <p id="memberRole">Tutor</p>
+      <p id="memberEmail">correo@ejemplo.com</p>
     </div>
 
     <div class="member-card">
@@ -65,5 +66,6 @@
 
 </main>
 
+<script src="script.js"></script>
 </body>
 </html>
