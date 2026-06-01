@@ -914,7 +914,10 @@ if (dashboardMembersCount && dashboardAlertsCount && dashboardGeofencesCount) {
       const alertsResponse = await fetch(`${API_URL}/alerts`);
       const alerts = await alertsResponse.json();
 
-      const trackingResponse = await fetch(`${API_URL}/tracking/1`);
+      const selectedDependentId =
+  localStorage.getItem("dashboardSelectedDependentId") || "1";
+
+const trackingResponse = await fetch(`${API_URL}/tracking/${selectedDependentId}`);
       const trackingData = await trackingResponse.json();
 
       const dependents = members.filter(member => member.role === "Dependiente").length;
@@ -1077,31 +1080,33 @@ const historyStartTime = document.getElementById("historyStartTime");
 const historyEndTime = document.getElementById("historyEndTime");
 
 if (historyDependentSelect && historyDate) {
-  async function loadHistoryDependents() {
-    try {
-      const response = await fetch(`${API_URL}/family-members`);
-      const members = await response.json();
+ async function loadHistoryDependents() {
+  try {
+    const response = await fetch(`${API_URL}/family-members`);
+    const members = await response.json();
 
-      const dependents = members.filter(member => member.role === "Dependiente");
+    const dependents = members.filter(member => member.role === "Dependiente");
 
-      historyDependentSelect.innerHTML = "";
+    historyDependentSelect.innerHTML = "";
 
-      if (dependents.length === 0) {
-        historyDependentSelect.innerHTML = `<option value="">Sin dependientes</option>`;
-        return;
-      }
-
-      dependents.forEach(member => {
-        const option = document.createElement("option");
-        option.value = member.fullName;
-        option.textContent = member.fullName;
-        historyDependentSelect.appendChild(option);
-      });
-
-    } catch (error) {
-      historyDependentSelect.innerHTML = `<option value="">Error al cargar</option>`;
+    if (dependents.length === 0) {
+      historyDependentSelect.innerHTML = `<option value="">Sin dependientes</option>`;
+      return;
     }
+
+    dependents.forEach(member => {
+      const option = document.createElement("option");
+      option.value = member.id;
+      option.textContent = member.fullName;
+      historyDependentSelect.appendChild(option);
+    });
+
+    loadHistoryLocationByDependent(historyDependentSelect.value);
+
+  } catch (error) {
+    historyDependentSelect.innerHTML = `<option value="">Error al cargar</option>`;
   }
+}
 
   const now = new Date();
 
@@ -1131,6 +1136,31 @@ if (historyDependentSelect && historyDate) {
   }
 
   loadHistoryDependents();
+  historyDependentSelect.addEventListener("change", () => {
+  loadHistoryLocationByDependent(historyDependentSelect.value);
+});
+  async function loadHistoryLocationByDependent(dependentId) {
+  if (!dependentId) return;
+
+  try {
+    const response = await fetch(`${API_URL}/tracking/${dependentId}`);
+    const data = await response.json();
+
+    if (response.ok) {
+      historyLatitude.textContent = data.latitude;
+      historyLongitude.textContent = data.longitude;
+      historyStatus.textContent = data.status || "Ruta segura";
+    } else {
+      historyLatitude.textContent = "No disponible";
+      historyLongitude.textContent = "No disponible";
+      historyStatus.textContent = "No se pudo cargar historial";
+    }
+  } catch (error) {
+    historyLatitude.textContent = "Error";
+    historyLongitude.textContent = "Error";
+    historyStatus.textContent = "Error de conexión";
+  }
+}
 }
 
 const historyDestination = document.getElementById("historyDestination");
@@ -1154,4 +1184,160 @@ if (historyDestination) {
   }
 
   loadHistoryDestination();
+}
+/* MODO DEPENDIENTE */
+
+const dependentTrackingSelect =
+  document.getElementById("dependentTrackingSelect");
+
+const sendLocationButton =
+  document.getElementById("sendLocationButton");
+
+const trackingMessage =
+  document.getElementById("trackingMessage");
+
+if (
+  dependentTrackingSelect &&
+  sendLocationButton &&
+  trackingMessage
+) {
+
+  async function loadDependentsForTracking() {
+    try {
+      const response = await fetch(`${API_URL}/family-members`);
+      const members = await response.json();
+
+      const dependents =
+        members.filter(member => member.role === "Dependiente");
+
+      dependentTrackingSelect.innerHTML = "";
+
+      dependents.forEach(member => {
+        const option = document.createElement("option");
+
+        option.value = member.id;
+        option.textContent = member.fullName;
+
+        dependentTrackingSelect.appendChild(option);
+      });
+
+    } catch (error) {
+      trackingMessage.textContent =
+        "Error cargando dependientes.";
+    }
+  }
+
+  sendLocationButton.addEventListener("click", () => {
+
+    const dependentId = dependentTrackingSelect.value;
+
+    if (!dependentId) {
+      trackingMessage.textContent =
+        "Selecciona un dependiente.";
+      return;
+    }
+
+    if (!navigator.geolocation) {
+      trackingMessage.textContent =
+        "GPS no soportado.";
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async position => {
+
+        try {
+
+          const response = await fetch(
+            `${API_URL}/tracking/location`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                dependentId: parseInt(dependentId),
+                latitude: position.coords.latitude.toString(),
+                longitude: position.coords.longitude.toString()
+              })
+            }
+          );
+
+          if (response.ok) {
+            trackingMessage.textContent =
+              "✅ Ubicación enviada correctamente.";
+          } else {
+            trackingMessage.textContent =
+              "❌ No se pudo enviar ubicación.";
+          }
+
+        } catch (error) {
+          trackingMessage.textContent =
+            "❌ Error al conectar con backend.";
+        }
+
+      }
+    );
+
+  });
+
+  loadDependentsForTracking();
+}
+/* DASHBOARD - SELECTOR DE DEPENDIENTE */
+
+const dashboardDependentSelect =
+  document.getElementById("dashboardDependentSelect");
+
+if (dashboardDependentSelect) {
+  async function loadDashboardDependents() {
+    try {
+      const response = await fetch(`${API_URL}/family-members`);
+      const members = await response.json();
+
+      const dependents =
+        members.filter(member => member.role === "Dependiente");
+
+      dashboardDependentSelect.innerHTML = "";
+
+      if (dependents.length === 0) {
+        dashboardDependentSelect.innerHTML =
+          `<option value="">Sin dependientes</option>`;
+        return;
+      }
+
+      dependents.forEach(member => {
+        const option = document.createElement("option");
+        option.value = member.id;
+        option.textContent = member.fullName;
+        dashboardDependentSelect.appendChild(option);
+      });
+
+      const savedDependentId =
+        localStorage.getItem("dashboardSelectedDependentId");
+
+      if (savedDependentId) {
+        dashboardDependentSelect.value = savedDependentId;
+      } else {
+        localStorage.setItem(
+          "dashboardSelectedDependentId",
+          dashboardDependentSelect.value
+        );
+      }
+
+    } catch (error) {
+      dashboardDependentSelect.innerHTML =
+        `<option value="">Error al cargar</option>`;
+    }
+  }
+
+  dashboardDependentSelect.addEventListener("change", () => {
+    localStorage.setItem(
+      "dashboardSelectedDependentId",
+      dashboardDependentSelect.value
+    );
+
+    location.reload();
+  });
+
+  loadDashboardDependents();
 }
