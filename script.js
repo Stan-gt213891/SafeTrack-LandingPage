@@ -13,7 +13,7 @@ if (privatePages.includes(currentPage) && !token) {
   window.location.href = "login.html";
 }
 
-const API_URL = "http://localhost:5298/api/v1";
+const API_URL = "https://safetrackauthservice-production.up.railway.app/api/v1";
 
 /* REGISTRO */
 
