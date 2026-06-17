@@ -1341,3 +1341,198 @@ if (dashboardDependentSelect) {
 
   loadDashboardDependents();
 }
+/* IDIOMA ESPAÑOL / INGLÉS */
+
+const translations = {
+  es: {
+    navHome: "INICIO",
+    navMembers: "MIEMBROS",
+    navAlerts: "ALERTAS",
+    navGeofences: "GEOCERCAS",
+    navHistory: "HISTORIAL",
+    navLogout: "CERRAR SESIÓN",
+
+    dashboardTitle: "DASHBOARD PRINCIPAL",
+    systemActive: "🟢 Sistema Activo",
+
+    dependents: "👥 Dependientes",
+    tutors: "👤 Tutores",
+    alertsCard: "🔔 Alertas",
+    geofencesCard: "🛡️ Geocercas",
+    location: "📍 Ubicación",
+    safeZone: "🛡️ Zona Segura",
+    selectedDependent: "Dependiente seleccionado:",
+role: "Rol:",
+lastUpdate: "Última actualización:",
+lastAlert: "🚨 Última alerta",
+safeDistance: "📏 Distancia a zona segura",
+welcome: "Bienvenido:",
+quickAccess: "Accesos Rápidos",
+viewHistory: "VER HISTORIAL",
+viewAlerts: "VER ALERTAS",
+viewGeofences: "VER GEOCERCAS",
+viewMembers: "VER MIEMBROS",
+navHowWorks: "CÓMO FUNCIONA",
+navAdvantages: "VENTAJAS",
+navPlans: "PLANES",
+navContact: "CONTACTO",
+navLogin: "INICIAR SESIÓN",
+navRegister: "REGISTRARSE",
+
+loginTitle: "INICIAR SESIÓN",
+emailLabel: "CORREO ELECTRÓNICO",
+passwordLabel: "CONTRASEÑA",
+loginButtonText: "INGRESAR",
+noAccountText: "¿No tienes una cuenta?",
+registerHere: "Regístrate aquí",
+registerTitle: "CREAR CUENTA",
+fullNameLabel: "NOMBRE COMPLETO",
+confirmPasswordLabel: "CONFIRMAR CONTRASEÑA",
+createAccountButton: "CREAR CUENTA",
+alreadyAccountText: "¿Ya tienes una cuenta?",
+loginHere: "Iniciar sesión",
+landingHeroTitle: "La seguridad de tu familia en la palma de tu mano.",
+landingHeroText: "Monitorea ubicaciones, recibe alertas inteligentes y protege a tus seres queridos desde cualquier lugar.",
+landingHeroButton: "COMENZAR",
+landingHowTitle: "¿Cómo funciona SafeTrack?",
+landingStep1Title: "Instalación y Registro",
+landingStep1Text: "Crea tu cuenta y configura tu familia.",
+landingStep2Title: "Monitoreo en Tiempo Real",
+landingStep2Text: "Monitorea la ubicación en tiempo real.",
+landingStep3Title: "Visualiza la ubicación segura",
+landingStep3Text: "Recibe alertas cuando salgan de zonas seguras.",
+landingBenefitsTitle: "¿Por qué elegir SafeTrack?",
+landingBenefit1Title: "Micro-Suscripciones",
+landingBenefit1Text: "Planes flexibles adaptados a cada familia.",
+landingBenefit2Title: "Alertas Instantáneas",
+landingBenefit2Text: "Notificaciones en tiempo real ante emergencias.",
+landingBenefit3Title: "Historial de Rutas",
+landingBenefit3Text: "Consulta recorridos y ubicaciones anteriores.",
+landingPlansTitle: "PLANES",
+landingFreePlanTitle: "PLAN GRATUITO",
+landingFreePlan1: "Monitoreo en tiempo real de 2 dispositivos.",
+landingFreePlan2: "Actualización de ubicación cada 5 minutos.",
+landingFreePlan3: "Configuración de 1 geocerca activa.",
+landingFreePlan4: "Alertas básicas de entrada y salida de zona.",
+landingFreePlanButton: "COMENZAR AHORA",
+landingProPlanTitle: "PLAN FAMILIAR PRO",
+landingProPlanPrice: "S/14.90 MENSUAL",
+landingProPlan1: "Monitoreo ilimitado de hasta 5 dispositivos.",
+landingProPlan2: "Actualización de ubicación en tiempo real.",
+landingProPlan3: "Geocercas inteligentes ilimitadas.",
+landingProPlan4: "Historial completo de rutas de los últimos 30 días.",
+landingProPlan5: "Botón de pánico S.O.S con envío de SMS automático.",
+landingProPlanButton: "PRUÉBALO GRATIS POR 7 DÍAS",
+landingTeamTitle: "Nuestro Equipo (GuardianTech)"
+
+  },
+
+  en: {
+    navHome: "HOME",
+    navMembers: "MEMBERS",
+    navAlerts: "ALERTS",
+    navGeofences: "GEOFENCES",
+    navHistory: "HISTORY",
+    navLogout: "LOGOUT",
+
+    dashboardTitle: "MAIN DASHBOARD",
+    systemActive: "🟢 System Active",
+
+    dependents: "👥 Dependents",
+    tutors: "👤 Guardians",
+    alertsCard: "🔔 Alerts",
+    geofencesCard: "🛡️ Geofences",
+    location: "📍 Location",
+    safeZone: "🛡️ Safe Zone",
+    selectedDependent: "Selected dependent:",
+role: "Role:",
+lastUpdate: "Last update:",
+lastAlert: "🚨 Last alert",
+safeDistance: "📏 Distance to safe zone",
+welcome: "Welcome:",
+quickAccess: "Quick Access",
+viewHistory: "VIEW HISTORY",
+viewAlerts: "VIEW ALERTS",
+viewGeofences: "VIEW GEOFENCES",
+viewMembers: "VIEW MEMBERS",
+navHowWorks: "HOW IT WORKS",
+navAdvantages: "ADVANTAGES",
+navPlans: "PLANS",
+navContact: "CONTACT",
+navLogin: "LOGIN",
+navRegister: "REGISTER",
+
+loginTitle: "LOGIN",
+emailLabel: "EMAIL",
+passwordLabel: "PASSWORD",
+loginButtonText: "SIGN IN",
+noAccountText: "Don't have an account?",
+registerHere: "Register here",
+registerTitle: "CREATE ACCOUNT",
+fullNameLabel: "FULL NAME",
+confirmPasswordLabel: "CONFIRM PASSWORD",
+createAccountButton: "CREATE ACCOUNT",
+alreadyAccountText: "Already have an account?",
+loginHere: "Login",
+landingHeroTitle: "Your family's safety in the palm of your hand.",
+landingHeroText: "Monitor locations, receive smart alerts, and protect your loved ones from anywhere.",
+landingHeroButton: "GET STARTED",
+landingHowTitle: "How does SafeTrack work?",
+landingStep1Title: "Installation and Registration",
+landingStep1Text: "Create your account and set up your family.",
+landingStep2Title: "Real-Time Monitoring",
+landingStep2Text: "Monitor location in real time.",
+landingStep3Title: "View safe locations",
+landingStep3Text: "Receive alerts when dependents leave safe zones.",
+landingBenefitsTitle: "Why choose SafeTrack?",
+landingBenefit1Title: "Micro-Subscriptions",
+landingBenefit1Text: "Flexible plans adapted to each family.",
+landingBenefit2Title: "Instant Alerts",
+landingBenefit2Text: "Real-time notifications in case of emergencies.",
+landingBenefit3Title: "Route History",
+landingBenefit3Text: "Check previous routes and locations.",
+landingPlansTitle: "PLANS",
+landingFreePlanTitle: "FREE PLAN",
+landingFreePlan1: "Real-time monitoring for 2 devices.",
+landingFreePlan2: "Location update every 5 minutes.",
+landingFreePlan3: "Configuration of 1 active geofence.",
+landingFreePlan4: "Basic entry and exit zone alerts.",
+landingFreePlanButton: "START NOW",
+landingProPlanTitle: "FAMILY PRO PLAN",
+landingProPlanPrice: "S/14.90 MONTHLY",
+landingProPlan1: "Unlimited monitoring for up to 5 devices.",
+landingProPlan2: "Real-time location updates.",
+landingProPlan3: "Unlimited smart geofences.",
+landingProPlan4: "Full route history for the last 30 days.",
+landingProPlan5: "S.O.S panic button with automatic SMS sending.",
+landingProPlanButton: "TRY IT FREE FOR 7 DAYS",
+landingTeamTitle: "Our Team (GuardianTech)"
+  }
+};
+
+function applyLanguage(language) {
+  const selectedTranslations = translations[language];
+
+  document.querySelectorAll("[data-i18n]").forEach(element => {
+    const key = element.getAttribute("data-i18n");
+
+    if (selectedTranslations[key]) {
+      element.textContent = selectedTranslations[key];
+    }
+  });
+
+  localStorage.setItem("safeTrackLanguage", language);
+}
+
+const languageSelector = document.getElementById("languageSelector");
+
+if (languageSelector) {
+  const savedLanguage = localStorage.getItem("safeTrackLanguage") || "es";
+
+  languageSelector.value = savedLanguage;
+  applyLanguage(savedLanguage);
+
+  languageSelector.addEventListener("change", () => {
+    applyLanguage(languageSelector.value);
+  });
+}

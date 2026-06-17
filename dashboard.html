@@ -13,39 +13,47 @@
     <img src="assets/logo-safetrack.png" alt="SafeTrack">
   </div>
 
-  <nav class="nav-links">
-    <a href="dashboard.html">INICIO</a>
-    <a href="miembros.html">MIEMBROS</a>
-    <a href="alertas.html">ALERTAS</a>
-    <a href="geocercas.html">GEOCERCAS</a>
-    <a href="historial.html">HISTORIAL</a>
-    <a href="#" id="logoutButton">CERRAR SESIÓN</a>
+ <nav class="nav-links">
+  <a href="dashboard.html" data-i18n="navHome">INICIO</a>
+  <a href="miembros.html" data-i18n="navMembers">MIEMBROS</a>
+  <a href="alertas.html" data-i18n="navAlerts">ALERTAS</a>
+  <a href="geocercas.html" data-i18n="navGeofences">GEOCERCAS</a>
+  <a href="historial.html" data-i18n="navHistory">HISTORIAL</a>
+  <a href="#" id="logoutButton" data-i18n="navLogout">CERRAR SESIÓN</a>
+
+  <select id="languageSelector">
+    <option value="es">ES</option>
+    <option value="en">EN</option>
+  </select>
+</nav>
   </nav>
 </header>
 
 <main class="dashboard-page">
 
-  <h1>DASHBOARD PRINCIPAL</h1>
+  <h1 data-i18n="dashboardTitle">DASHBOARD PRINCIPAL</h1>
 
  <p class="welcome-user">
-  Bienvenido: <span id="dashboardFullName">Usuario</span>
+  <span data-i18n="welcome">Bienvenido:</span>
+<span id="dashboardFullName">
 </p>
 <p class="welcome-user">
-  Dependiente seleccionado:
+  <span data-i18n="selectedDependent">Dependiente seleccionado:</span>
   <select id="dashboardDependentSelect">
     <option value="">Cargando dependientes...</option>
   </select>
 </p>
 
 <p class="welcome-user">
-  Rol: <span id="dashboardRole">Tutor</span>
+  <span data-i18n="role">Rol:</span> <span id="dashboardRole">Tutor</span>
 </p>
 
   <p class="status-active">
-    🟢 Sistema Activo
+    <span data-i18n="systemActive">🟢 Sistema Activo</span>
   </p>
 
-  <div class="update-box">
+<div class="update-box">
+  <span data-i18n="lastUpdate">Última actualización:</span>
   Última actualización:<br>
   <span id="lastUpdateDate">Cargando...</span>
 </div>
@@ -53,37 +61,37 @@
   <div class="dashboard-grid">
     
     <div class="dashboard-card">
-  <h3>👨‍👩‍👧 Dependientes</h3>
+ <h3 data-i18n="dependents">👥 Dependientes</h3>
   <p id="dashboardMembersCount">Cargando...</p>
 </div>
 <div class="dashboard-card">
-  <h3>👤 Tutores</h3>
+ <h3 data-i18n="tutors">👤 Tutores</h3>
   <p id="dashboardTutorsCount">Cargando...</p>
 </div>
 
 <div class="dashboard-card">
-  <h3>🔔 Alertas</h3>
+ <h3 data-i18n="alerts">🔔 Alertas</h3>
   <p id="dashboardAlertsCount">Cargando...</p>
 </div>
 <div class="dashboard-card">
-  <h3>🚨 Última alerta</h3>
+ <h3 data-i18n="lastAlert">🚨 Última alerta</h3>
   <p id="dashboardLastAlert">Cargando...</p>
 </div>
 <div class="dashboard-card">
-  <h3>🛡️ Geocercas</h3>
+  <h3 data-i18n="geofences">🛡️ Geocercas</h3>
   <p id="dashboardGeofencesCount">Cargando...</p>
 </div>
 <div class="dashboard-card">
-  <h3>🛡️ Zona Segura</h3>
+ <h3 data-i18n="safeZone">🛡️ Zona Segura</h3>
   <p id="dashboardSafeZone">Cargando...</p>
 </div>
 
     <div class="dashboard-card">
-  <h3>📍 Ubicación</h3>
+ <h3 data-i18n="location">📍 Ubicación</h3>
   <p id="dashboardLocation">Cargando ubicación...</p>
 </div>
 <div class="dashboard-card">
-  <h3>📏 Distancia a zona segura</h3>
+<h3 data-i18n="safeDistance">📏 Distancia a zona segura</h3>
   <p id="dashboardSafeDistance">Cargando...</p>
 </div>
 
@@ -91,13 +99,14 @@
 
   <div class="quick-access">
 
-    <h2>Accesos Rápidos</h2>
+  <h2 data-i18n="quickAccess">Accesos Rápidos</h2>
 
-    <a href="historial.html" class="quick-btn">VER HISTORIAL</a>
-    <a href="alertas.html" class="quick-btn">VER ALERTAS</a>
-    <a href="geocercas.html" class="quick-btn">VER GEOCERCAS</a>
-    <a href="miembros.html" class="quick-btn">VER MIEMBROS</a>
-
+    <a href="historial.html" class="quick-btn"<span data-i18n="viewHistory">VER HISTORIAL</span>
+    <a href="alertas.html" class="quick-btn"<span data-i18n="viewAlerts">VER ALERTAS</span>
+    <a href="geocercas.html" class="quick-btn"<span data-i18n="viewGeofences">VER GEOCERCAS</span>
+    <a href="miembros.html" class="quick-btn">
+  <span data-i18n="viewMembers">VER MIEMBROS</span>
+</a>
   </div>
 
 </main>

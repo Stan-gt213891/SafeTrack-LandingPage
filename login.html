@@ -14,41 +14,46 @@
   </div>
 
   <nav class="nav-links">
-    <a href="index.html">INICIO</a>
-    <a href="index.html#funciona">COMO FUNCIONA</a>
-    <a href="index.html#ventajas">VENTAJAS</a>
-    <a href="index.html#planes">PLANES</a>
-    <a href="index.html#contacto">CONTACTO</a>
-    <a href="login.html">INICIAR SESIÓN</a>
-    <a href="registro.html">REGISTRARSE</a>
+    <a href="index.html" data-i18n="navHome">INICIO</a>
+    <a href="index.html#funciona" data-i18n="navHowWorks">CÓMO FUNCIONA</a>
+    <a href="index.html#ventajas" data-i18n="navAdvantages">VENTAJAS</a>
+    <a href="index.html#planes" data-i18n="navPlans">PLANES</a>
+    <a href="index.html#contacto" data-i18n="navContact">CONTACTO</a>
+    <a href="login.html" data-i18n="navLogin">INICIAR SESIÓN</a>
+    <a href="registro.html" data-i18n="navRegister">REGISTRARSE</a>
+
+    <select id="languageSelector">
+      <option value="es">ES</option>
+      <option value="en">EN</option>
+    </select>
   </nav>
 </header>
 
 <div class="auth-page">
   <div class="auth-card">
 
-    <h1>INICIAR SESIÓN</h1>
+    <h1 data-i18n="loginTitle">INICIAR SESIÓN</h1>
 
-    <label>CORREO ELECTRÓNICO</label>
+    <label data-i18n="emailLabel">CORREO ELECTRÓNICO</label>
     <div class="input-box">
       <span>✉️</span>
       <input id="loginEmail" type="email" placeholder="ejemplo@correo.com">
     </div>
 
-    <label>CONTRASEÑA</label>
+    <label data-i18n="passwordLabel">CONTRASEÑA</label>
     <div class="input-box">
       <span>🔒</span>
       <input id="loginPassword" type="password" placeholder="********">
     </div>
 
-    <button id="loginButton" class="auth-button">
+    <button id="loginButton" class="auth-button" data-i18n="loginButtonText">
       INGRESAR
     </button>
 
     <p id="loginMessage" class="auth-text"></p>
 
-    <p class="auth-text">¿No tienes una cuenta?</p>
-    <a href="registro.html" class="auth-link">Regístrate aquí</a>
+    <p class="auth-text" data-i18n="noAccountText">¿No tienes una cuenta?</p>
+    <a href="registro.html" class="auth-link" data-i18n="registerHere">Regístrate aquí</a>
 
   </div>
 </div>

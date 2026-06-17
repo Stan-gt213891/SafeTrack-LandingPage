@@ -14,56 +14,61 @@
   </div>
 
   <nav class="nav-links">
-    <a href="index.html">INICIO</a>
-    <a href="index.html#funciona">COMO FUNCIONA</a>
-    <a href="index.html#ventajas">VENTAJAS</a>
-    <a href="index.html#planes">PLANES</a>
-    <a href="index.html#contacto">CONTACTO</a>
-    <a href="login.html">INICIAR SESIÓN</a>
-    <a href="registro.html">REGISTRARSE</a>
+    <a href="index.html" data-i18n="navHome">INICIO</a>
+    <a href="index.html#funciona" data-i18n="navHowWorks">COMO FUNCIONA</a>
+    <a href="index.html#ventajas" data-i18n="navAdvantages">VENTAJAS</a>
+    <a href="index.html#planes" data-i18n="navPlans">PLANES</a>
+    <a href="index.html#contacto" data-i18n="navContact">CONTACTO</a>
+    <a href="login.html" data-i18n="navLogin">INICIAR SESIÓN</a>
+    <a href="registro.html" data-i18n="navRegister">REGISTRARSE</a>
+
+    <select id="languageSelector">
+      <option value="es">ES</option>
+      <option value="en">EN</option>
+    </select>
   </nav>
 </header>
 
 <div class="auth-page">
   <div class="auth-card">
 
-    <h1>CREAR CUENTA</h1>
+    <h1 data-i18n="registerTitle">CREAR CUENTA</h1>
 
-    <label>NOMBRE COMPLETO</label>
+    <label data-i18n="fullNameLabel">NOMBRE COMPLETO</label>
     <div class="input-box">
       <span>👤</span>
       <input id="registerFullName" type="text" placeholder="Nombre y apellido">
     </div>
 
-    <label>CORREO ELECTRÓNICO</label>
+    <label data-i18n="emailLabel">CORREO ELECTRÓNICO</label>
     <div class="input-box">
       <span>✉️</span>
       <input id="registerEmail" type="email" placeholder="ejemplo@correo.com">
     </div>
 
-    <label>CONTRASEÑA</label>
+    <label data-i18n="passwordLabel">CONTRASEÑA</label>
     <div class="input-box">
       <span>🔒</span>
       <input id="registerPassword" type="password" placeholder="********">
     </div>
 
-    <label>CONFIRMAR CONTRASEÑA</label>
+    <label data-i18n="confirmPasswordLabel">CONFIRMAR CONTRASEÑA</label>
     <div class="input-box">
       <span>🔒</span>
       <input id="confirmPassword" type="password" placeholder="********">
     </div>
 
-    <button id="registerButton" class="auth-button">
+    <button id="registerButton" class="auth-button" data-i18n="createAccountButton">
       CREAR CUENTA
     </button>
 
     <p id="registerMessage" class="auth-text"></p>
 
-    <p class="auth-text">
+    <p class="auth-text" data-i18n="alreadyAccountText">
       ¿Ya tienes una cuenta?
     </p>
 
-    <a href="login.html" class="auth-link">
+    <a href="login.html" class="auth-link" data-i18n="loginHere">
       Iniciar sesión
     </a>
 

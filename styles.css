@@ -17,6 +17,8 @@ body {
   background: #1f3f96;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
 }
 
 .logo-box {
@@ -35,16 +37,33 @@ body {
 .nav-links {
   flex: 1;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  gap: 28px;
+  flex-wrap: nowrap;
 }
 
 .nav-links a {
+  white-space: nowrap;
+}
+.nav-links a {
   color: white;
   text-decoration: none;
-  font-weight: 800;
+  font-weight: bold;
   font-size: 14px;
-  font-style: italic;
+}
+
+.nav-links a:visited {
+  color: white;
+}
+
+.nav-links a:hover {
+  color: #ffd166;
+}
+
+#languageSelector {
+  padding: 4px 6px;
+  font-size: 12px;
 }
 
 /* LANDING */
